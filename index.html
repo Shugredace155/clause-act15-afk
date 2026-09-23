@@ -24,9 +24,8 @@
 <div id="wrap">
   <div id="hud">
     <button type="button" id="btnLease">Lease</button>
-    <button type="button" id="btnNapkin">Napkin</button>
+    <button type="button" id="btnNapkin">House Clause</button>
     <button type="button" id="btnCal">Calendar</button>
-    <button type="button" id="btnStand">Standings</button>
   </div>
   <div id="stage">
     <div id="cast"></div>
@@ -34,14 +33,13 @@
     <div id="line"></div>
     <div id="choices"></div>
   </div>
-  <div id="meta">Clause Act 1.5 Fracture · Bark fill · HTML AFK for Driver · main 1882d200 · not Ren'Py wasm</div>
+  <div id="meta">Clause Act 1.5 Fracture · tip 9d301674 · PR #18</div>
 </div>
 <dialog id="panel"><div id="panelBody"></div><form method="dialog"><button>Close</button></form></dialog>
+<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
 <script>
-const NODES = {"start": {"type": "goto", "to": "a15_incident_trigger"}, "a15_incident_trigger": {"type": "line", "speaker": "", "text": "Night. Someone left the hall light and a door problem. Quiet hours aren't quiet.", "next": "a15_incident_jordan"}, "a15_incident_jordan": {"type": "line", "speaker": "Jordan", "text": "Okay — that one was me. Comic defense incoming.", "next": "a15_incident_sam"}, "a15_incident_sam": {"type": "line", "speaker": "Sam", "text": "I'm witnessing. Not judging. Mostly witnessing.", "next": "a15_incident_alex"}, "a15_incident_alex": {"type": "line", "speaker": "Alex", "text": "Walls again. Always walls.", "next": "a15_incident_riley"}, "a15_incident_riley": {"type": "line", "speaker": "Riley", "text": "Hall. Light. Door. We don't sleep this off — we meet.", "next": "a15_incident_pc"}, "a15_incident_pc": {"type": "choice", "prompt": "Incident.", "options": [{"text": "I'll sit for the meeting.", "to": "a15_incident_pc_own"}, {"text": "Napkin's about to get a sequel.", "to": "a15_incident_pc_dry"}, {"text": "Quiet hours first. Then words.", "to": "a15_incident_pc_bound"}]}, "a15_incident_pc_own": {"type": "line", "speaker": "You", "text": "I'll sit for the meeting.", "next": "a15_meeting_call"}, "a15_incident_pc_dry": {"type": "line", "speaker": "You", "text": "Napkin's about to get a sequel.", "next": "a15_meeting_call"}, "a15_incident_pc_bound": {"type": "line", "speaker": "You", "text": "Quiet hours first. Then words.", "next": "a15_meeting_call"}, "a15_meeting_call": {"type": "line", "speaker": "Riley", "text": "House meeting. Sit. Nobody claims they 'slept through' this one.", "next": "a15_meeting_sam"}, "a15_meeting_sam": {"type": "line", "speaker": "Sam", "text": "I'm here. Soft crime desk is open. Please don't make me cry and minute-take.", "next": "a15_meeting_jordan"}, "a15_meeting_jordan": {"type": "line", "speaker": "Jordan", "text": "Present. Mildly guilty. Extremely awake.", "next": "a15_meeting_alex"}, "a15_meeting_alex": {"type": "line", "speaker": "Alex", "text": "Here.", "next": "a15_meeting_pc"}, "a15_meeting_pc": {"type": "line", "speaker": "You", "text": "Here.", "next": "a15_napkin_reread_intro"}, "a15_napkin_reread_intro": {"type": "line", "speaker": "Riley", "text": "We read it again. Same napkin. New pressure.", "next": "a15_napkin_reread_1"}, "a15_napkin_reread_1": {"type": "line", "speaker": "Riley", "text": "Rule one: rent and utilities on time. Shortfall gets said early — not on due day.", "next": "a15_napkin_reread_2"}, "a15_napkin_reread_2": {"type": "line", "speaker": "Sam", "text": "Rule two: chores rotate. If you swap, tell the group chat. Ghosting the sink is… a crime. Soft crime.", "next": "a15_napkin_reread_3"}, "a15_napkin_reread_3": {"type": "line", "speaker": "Jordan", "text": "Rule three: overnight guests get a heads-up. Couches aren't secret hotels.", "next": "a15_napkin_reread_4"}, "a15_napkin_reread_4": {"type": "line", "speaker": "Alex", "text": "Rule four: doors mean something. Knock. Wait. Don't invent emergencies.", "next": "a15_napkin_reread_5"}, "a15_napkin_reread_5": {"type": "line", "speaker": "Riley", "text": "Rule five: flirting's fine. Pressure isn't. If someone says stop, it stops. No clever loopholes.", "next": "a15_napkin_reread_after"}, "a15_napkin_reread_after": {"type": "line", "speaker": "Riley", "text": "We initialed. We break, we amend in daylight — not after someone's mad at 2 a.m.", "next": "a15_vote_round_intro"}, "a15_vote_round_intro": {"type": "line", "speaker": "Riley", "text": "Vote: was tonight a warning, a rewrite, or a personal problem we're pretending is a house problem?", "next": "a15_vote_round"}, "a15_vote_round": {"type": "choice", "prompt": "Vote.", "options": [{"text": "Warning. Log it. Move on.", "to": "a15_vote_warn"}, {"text": "We amend something — carefully.", "to": "a15_vote_rewrite"}, {"text": "Personal. Don't weaponize the napkin.", "to": "a15_vote_personal"}]}, "a15_vote_warn": {"type": "line", "speaker": "You", "text": "Warning. Log it. Move on.", "next": "a15_vote_riley", "flags": {"a15_vote": "warn"}}, "a15_vote_rewrite": {"type": "line", "speaker": "You", "text": "We amend something — carefully.", "next": "a15_vote_riley", "flags": {"a15_vote": "rewrite"}}, "a15_vote_personal": {"type": "line", "speaker": "You", "text": "Personal. Don't weaponize the napkin.", "next": "a15_vote_riley", "flags": {"a15_vote": "personal"}}, "a15_vote_riley": {"type": "line", "speaker": "Riley", "text": "Fine. Warning carries. I'm not rewriting our history into a bylaw.", "next": "a15_vote_react_sam"}, "a15_vote_react_sam": {"type": "line", "speaker": "Sam", "text": "I can live with a warning. Rewrite scares me. Personal… also scares me.", "next": "a15_vote_react_jordan"}, "a15_vote_react_jordan": {"type": "line", "speaker": "Jordan", "text": "Warning's fair. If we rewrite, I want daylight and coffee.", "next": "a15_vote_react_alex"}, "a15_vote_react_alex": {"type": "line", "speaker": "Alex", "text": "Warning. Then quieter feet.", "next": "a15_priority_intro"}, "a15_priority_intro": {"type": "line", "speaker": "", "text": "One priority for the fracture. Pick one.", "next": "a15_priority_choice"}, "a15_priority_choice": {"type": "choice", "prompt": "Priority.", "options": [{"text": "Lease first — rent, shifts, Lit. The apartment stays funded.", "to": "a15_priority_lease"}, {"text": "One bond — I walk toward one person, carefully.", "to": "a15_priority_onebond"}, {"text": "Everyone — keep the house from fracturing into sides.", "to": "a15_priority_everyone"}, {"text": "Alone — I hold the center without picking a door yet.", "to": "a15_priority_alone"}]}, "a15_priority_lease": {"type": "line", "speaker": "You", "text": "Lease first — rent, shifts, Lit. The apartment stays funded.", "next": "a15_ack_riley_lease", "flags": {"a15_priority": "lease"}}, "a15_priority_onebond": {"type": "line", "speaker": "You", "text": "One bond — I walk toward one person, carefully.", "next": "a15_ack_riley_onebond", "flags": {"a15_priority": "onebond"}}, "a15_priority_everyone": {"type": "line", "speaker": "You", "text": "Everyone — keep the house from fracturing into sides.", "next": "a15_ack_riley_everyone", "flags": {"a15_priority": "everyone"}}, "a15_priority_alone": {"type": "line", "speaker": "You", "text": "Alone — I hold the center without picking a door yet.", "next": "a15_ack_riley_alone", "flags": {"a15_priority": "alone"}}, "a15_ack_riley_lease": {"type": "line", "speaker": "Riley", "text": "Lease. Good. Numbers don't care about our feelings — and neither should the due date.", "next": "a15_ack_jordan_lease"}, "a15_ack_jordan_lease": {"type": "line", "speaker": "Jordan", "text": "Lease. Boring. Correct. I'll try not to make it worse.", "next": "a15_ack_sam"}, "a15_ack_riley_onebond": {"type": "line", "speaker": "Riley", "text": "One bond. Be precise. Ex history isn't a free pass — including mine.", "next": "a15_ack_jordan_onebond"}, "a15_ack_jordan_onebond": {"type": "line", "speaker": "Jordan", "text": "One bond. Dramatic. I respect the theater — don't cast me by accident.", "next": "a15_ack_sam"}, "a15_ack_riley_everyone": {"type": "line", "speaker": "Riley", "text": "Everyone. Ambitious. Don't use it to avoid naming what you want.", "next": "a15_ack_jordan_everyone"}, "a15_ack_jordan_everyone": {"type": "line", "speaker": "Jordan", "text": "Everyone. Cute. Hard. I'll bring snacks to the group therapy we're pretending isn't happening.", "next": "a15_ack_sam"}, "a15_ack_riley_alone": {"type": "line", "speaker": "Riley", "text": "Alone. That's allowed. Don't confuse alone with disappearing.", "next": "a15_ack_jordan_alone"}, "a15_ack_jordan_alone": {"type": "line", "speaker": "Jordan", "text": "Alone. Fine. Boxes and I will mind our business.", "next": "a15_ack_sam"}, "a15_ack_sam": {"type": "line", "speaker": "Sam", "text": "I'll put the priority on the fridge under the napkin. Friendly threat. Very visible.", "next": "a15_ack_alex"}, "a15_ack_alex": {"type": "line", "speaker": "Alex", "text": "Priority heard. I'll keep the volume down either way.", "next": "a15_gate_arm_nar"}, "a15_gate_arm_nar": {"type": "line", "speaker": "", "text": "Something in the house arms. Not a route lock — a gate. Act 2 will ask who you walk toward.", "next": "a15_gate_arm_riley", "flags": {"act15_gate_armed": true}}, "a15_gate_arm_riley": {"type": "line", "speaker": "Riley", "text": "If you walk toward anyone, you do it with the napkin still true. Including me.", "next": "a15_gate_arm_jordan"}, "a15_gate_arm_jordan": {"type": "line", "speaker": "Jordan", "text": "Gates are dramatic. I respect the theater. Don't trip.", "next": "a15_gate_arm_sam"}, "a15_gate_arm_sam": {"type": "line", "speaker": "Sam", "text": "I'm going to worry politely. That's my whole contribution.", "next": "a15_gate_arm_alex"}, "a15_gate_arm_alex": {"type": "line", "speaker": "Alex", "text": "When it opens, talk quiet.", "next": "a15_gate_arm_pc"}, "a15_gate_arm_pc": {"type": "choice", "prompt": "Gate.", "options": [{"text": "I hear it. I'll be careful.", "to": "a15_gate_arm_pc_ready"}, {"text": "Armed gates. Very us.", "to": "a15_gate_arm_pc_dry"}, {"text": "Napkin first. Then whoever.", "to": "a15_gate_arm_pc_bound"}]}, "a15_gate_arm_pc_ready": {"type": "line", "speaker": "You", "text": "I hear it. I'll be careful.", "next": "a15_chunk_end"}, "a15_gate_arm_pc_dry": {"type": "line", "speaker": "You", "text": "Armed gates. Very us.", "next": "a15_chunk_end"}, "a15_gate_arm_pc_bound": {"type": "line", "speaker": "You", "text": "Napkin first. Then whoever.", "next": "a15_chunk_end"}, "a15_chunk_end": {"type": "end", "text": "Fracture chunk end. Gate armed. No formal #1. HTML AFK for Driver - mirrors main 1882d200 Bark fill (Hallway/Soft Spot defaults)."}};
-const COLORS = {"Jordan": "#a8e6a1", "Riley": "#7ec8e3", "Sam": "#f0a7a0", "Alex": "#f5d76e", "You": "#e8d5ff"};
-let cur = 'start';
-const flags = {};
+const COLORS = {"Jordan":"#a8e6a1","Riley":"#7ec8e3","Sam":"#f0a7a0","Alex":"#f5d76e","You":"#e8d5ff"};
+PLACEHOLDER_NODES
 const castEl = document.getElementById('cast');
 const speakerEl = document.getElementById('speaker');
 const lineEl = document.getElementById('line');
@@ -49,22 +47,15 @@ const choicesEl = document.getElementById('choices');
 const panel = document.getElementById('panel');
 const panelBody = document.getElementById('panelBody');
 function showCast() {
-  const people = [['Riley','#7ec8e3'],['Sam','#f0a7a0'],['Alex','#f5d76e'],['Jordan','#a8e6a1']];
-  castEl.innerHTML = people.map(([n,c]) => '<div class="spr" style="background:'+c+'">'+n+'</div>').join('');
+  const names = ["Riley","Jordan","Sam","Alex"];
+  castEl.innerHTML = names.map(n => `<div class="spr" style="background:${COLORS[n]}33;border:1px solid ${COLORS[n]}99">${n}</div>`).join('');
 }
 function go(id) {
-  cur = id;
   const n = NODES[id];
-  if (!n) { lineEl.textContent = 'Missing node '+id; return; }
+  if (!n) { lineEl.textContent = '(missing node) '+id; return; }
   if (n.type === 'goto') return go(n.to);
-  if (n.flags) Object.assign(flags, n.flags);
   choicesEl.innerHTML = '';
-  showCast();
-  if (n.type === 'end') {
-    speakerEl.textContent = '';
-    lineEl.textContent = n.text + ' flags=' + JSON.stringify(flags);
-    return;
-  }
+  if (n.type === 'end') { speakerEl.textContent = ''; lineEl.textContent = n.text; return; }
   if (n.type === 'choice') {
     speakerEl.textContent = '';
     lineEl.textContent = n.prompt || '';
@@ -76,6 +67,7 @@ function go(id) {
     });
     return;
   }
+  showCast();
   const sp = n.speaker || '';
   speakerEl.style.color = COLORS[sp] || '#eee';
   speakerEl.textContent = sp;
@@ -86,19 +78,15 @@ function go(id) {
   choicesEl.appendChild(cont);
 }
 document.getElementById('btnLease').onclick = () => {
-  panelBody.innerHTML = '<h3>LEASE</h3><p>Unit: 4B - Clause House</p><p>Rent: $875 / mo</p><p>Status: Signed</p>';
+  panelBody.innerHTML = '<h3>LEASE</h3><p>Fracture chunk. Priority may be lease — rent, shifts, Lit.</p>';
   panel.showModal();
 };
 document.getElementById('btnNapkin').onclick = () => {
-  panelBody.innerHTML = '<h3>NAPKIN</h3><p>Rules 1-5 still bind. Fracture reread in play.</p>';
+  panelBody.innerHTML = '<h3>HOUSE CLAUSE</h3><ol><li>No dating roommates</li><li>Quiet hours 11–7</li><li>Chores rotate</li><li>Rent before the 5th</li><li>Break → meet within 48h</li></ol>';
   panel.showModal();
 };
 document.getElementById('btnCal').onclick = () => {
-  panelBody.innerHTML = '<h3>CALENDAR</h3><p>Fracture night - meeting/vote to gate armed.</p>';
-  panel.showModal();
-};
-document.getElementById('btnStand').onclick = () => {
-  panelBody.innerHTML = '<h3>STANDINGS</h3><p>Riley: Hallway (35)</p><p>Sam/Jordan/Alex: Soft Spot (50)</p><p>AFK uses those default tiers for standing lines.</p>';
+  panelBody.innerHTML = '<h3>CALENDAR</h3><p>Act 1.5 — Fracture</p><p>House meeting / vote / priority / gate arm</p>';
   panel.showModal();
 };
 go('start');
